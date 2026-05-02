@@ -1,0 +1,84 @@
+{
+  "id": "river_flow",
+  "name": "River Flow",
+  "version": "0.1.0",
+  "description": "Display real-time streamflow data from a USGS water monitoring station.",
+  "author": "FiestaBoard Team",
+  "icon": "droplets",
+  "category": "data",
+  "repository": "https://github.com/Fiestaboard/fiestaboard-plugin--river-flow",
+  "documentation": "README.md",
+  "min_refresh_seconds": 900,
+  "settings_schema": {
+    "type": "object",
+    "properties": {
+      "enabled": {
+        "type": "boolean",
+        "title": "Enabled",
+        "default": false
+      },
+      "site_number": {
+        "type": "string",
+        "title": "USGS Site Number",
+        "description": "USGS monitoring station site number (e.g. 11169000 for Guadalupe River).",
+        "default": "11169000"
+      },
+      "refresh_seconds": {
+        "type": "integer",
+        "title": "Refresh Interval (seconds)",
+        "description": "How often to fetch streamflow data.",
+        "default": 900,
+        "minimum": 600
+      }
+    },
+    "required": [
+      "site_number"
+    ]
+  },
+  "variables": {
+    "groups": {
+      "flow": {
+        "label": "Streamflow"
+      }
+    },
+    "simple": {
+      "site_name": {
+        "description": "USGS monitoring station name",
+        "type": "string",
+        "max_length": 22,
+        "group": "flow",
+        "example": "Guadalupe R nr Gilroy"
+      },
+      "flow_cfs": {
+        "description": "Current discharge in cubic feet per second",
+        "type": "number",
+        "max_length": 10,
+        "group": "flow",
+        "example": "245.0"
+      },
+      "status": {
+        "description": "Flow status relative to historical median",
+        "type": "string",
+        "max_length": 12,
+        "group": "flow",
+        "example": "Above normal"
+      },
+      "last_updated": {
+        "description": "Timestamp of last measurement",
+        "type": "string",
+        "max_length": 16,
+        "group": "flow",
+        "example": "2026-05-01 12:00"
+      }
+    }
+  },
+  "screenshots": [
+    {
+      "src": "docs/board-display.png",
+      "alt": "River Flow displayed on a Vestaboard",
+      "caption": "Example board output using the default template",
+      "primary": true
+    }
+  ],
+  "api_docs": "https://waterservices.usgs.gov/"
+}
