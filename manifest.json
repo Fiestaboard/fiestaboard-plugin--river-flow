@@ -1,7 +1,7 @@
 {
   "id": "river_flow",
   "name": "River Flow",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Display real-time streamflow data from a USGS water monitoring station.",
   "author": "FiestaBoard Team",
   "icon": "droplets",
@@ -80,5 +80,48 @@
       "primary": true
     }
   ],
-  "api_docs": "https://waterservices.usgs.gov/"
+  "api_docs": "https://waterservices.usgs.gov/",
+  "demo": {
+    "name": "River Flow Demo",
+    "device_type": "flagship",
+    "config": {
+      "enabled": true,
+      "site_number": "11169000",
+      "refresh_seconds": 900
+    },
+    "template": [
+      "River Flow",
+      "{{river_flow.site_name}}",
+      "",
+      "Flow: {{river_flow.flow_cfs}} cfs",
+      "{{river_flow.status}}",
+      "{{river_flow.last_updated}}"
+    ],
+    "line_metadata": [
+      {
+        "alignment": "center",
+        "wrap": false
+      },
+      {
+        "alignment": "center",
+        "wrap": false
+      },
+      {
+        "alignment": "left",
+        "wrap": false
+      },
+      {
+        "alignment": "left",
+        "wrap": false
+      },
+      {
+        "alignment": "left",
+        "wrap": false
+      },
+      {
+        "alignment": "left",
+        "wrap": false
+      }
+    ]
+  }
 }
