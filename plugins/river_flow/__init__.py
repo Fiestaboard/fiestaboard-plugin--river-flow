@@ -44,7 +44,7 @@ class RiverFlowPlugin(PluginBase):
                 return PluginResult(available=False, error="No data for site")
 
             ts = time_series[0]
-            site_name = str(ts.get("sourceInfo", {}).get("siteName", site))[:22]
+            site_name = str(ts.get("sourceInfo", {}).get("siteName", site))
 
             values = ts.get("values", [{}])[0].get("value", [])
             if not values:
