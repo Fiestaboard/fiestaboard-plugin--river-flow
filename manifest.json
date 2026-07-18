@@ -1,7 +1,7 @@
 {
   "id": "river_flow",
   "name": "River Flow",
-  "version": "0.2.0",
+  "version": "1.0.0",
   "description": "Display real-time streamflow data from a USGS water monitoring station.",
   "author": "FiestaBoard Team",
   "icon": "droplets",
