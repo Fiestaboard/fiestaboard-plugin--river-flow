@@ -4,13 +4,13 @@ Display real-time streamflow data from a USGS water monitoring station.
 
 ## Overview
 
-The River Flow plugin queries USGS Water Services for real-time discharge (streamflow) data at a configured monitoring station. It shows the current flow rate and whether the river is above or below the historical median. No API key required.
+The River Flow plugin queries the USGS Water Data APIs for real-time discharge (streamflow) data at a configured monitoring station. It shows the current flow rate and whether the river is above or below the historical median. No API key required.
 
-- API reference: https://waterservices.usgs.gov/
+- API reference: https://api.waterdata.usgs.gov/docs/
 
 ### Prerequisites
 
-No API key required. Find your station number at waterdata.usgs.gov/nwis/rt.
+No API key required (an optional key raises rate limits — sign up at https://api.waterdata.usgs.gov/signup/). Find your station number at https://dashboard.waterdata.usgs.gov/.
 
 ## Quick Setup
 
@@ -26,7 +26,7 @@ No API key required. Find your station number at waterdata.usgs.gov/nwis/rt.
 
 | Variable | Description | Example |
 |---|---|---|
-| `river_flow.site_name` | USGS monitoring station name | `Guadalupe R nr Gilroy` |
+| `river_flow.site_name` | USGS monitoring station name | `GUADALUPE R A SAN JOSE` |
 | `river_flow.flow_cfs` | Current discharge in cubic feet per second | `245.0` |
 | `river_flow.status` | Flow status relative to historical median | `Above normal` |
 | `river_flow.last_updated` | Timestamp of last measurement | `2026-05-01 12:00` |
@@ -36,8 +36,9 @@ No API key required. Find your station number at waterdata.usgs.gov/nwis/rt.
 | Setting | Name | Description | Default |
 |---|---|---|---|
 | `enabled` | Enabled |  | `False` |
-| `site_number` | USGS Site Number | USGS monitoring station site number (e.g. 11169000 for Guadalupe River). | `11169000` |
+| `site_number` | USGS Site Number | USGS monitoring station site number (e.g. 11169025 for Guadalupe River at San Jose). | `11169025` |
 | `refresh_seconds` | Refresh Interval (seconds) | How often to fetch streamflow data. | `900` |
+| `api_key` | USGS API Key (optional) | Optional API key for higher rate limits. | `` |
 
 ## Troubleshooting
 

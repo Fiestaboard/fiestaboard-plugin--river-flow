@@ -1,7 +1,7 @@
 {
   "id": "river_flow",
   "name": "River Flow",
-  "version": "0.1.3",
+  "version": "1.0.0",
   "description": "Display real-time streamflow data from a USGS water monitoring station.",
   "author": "FiestaBoard Team",
   "icon": "droplets",
@@ -20,8 +20,8 @@
       "site_number": {
         "type": "string",
         "title": "USGS Site Number",
-        "description": "USGS monitoring station site number (e.g. 11169000 for Guadalupe River).",
-        "default": "11169000"
+        "description": "USGS monitoring station site number (e.g. 11169025 for Guadalupe River at San Jose).",
+        "default": "11169025"
       },
       "refresh_seconds": {
         "type": "integer",
@@ -29,6 +29,12 @@
         "description": "How often to fetch streamflow data.",
         "default": 900,
         "minimum": 600
+      },
+      "api_key": {
+        "type": "string",
+        "title": "USGS API Key (optional)",
+        "description": "Optional API key for higher rate limits. Sign up at https://api.waterdata.usgs.gov/signup/. Not needed for a single board.",
+        "default": ""
       }
     },
     "required": [
@@ -47,7 +53,7 @@
         "type": "string",
         "max_length": 22,
         "group": "flow",
-        "example": "Guadalupe R nr Gilroy"
+        "example": "GUADALUPE R A SAN JOSE"
       },
       "flow_cfs": {
         "description": "Current discharge in cubic feet per second",
@@ -80,13 +86,13 @@
       "primary": true
     }
   ],
-  "api_docs": "https://waterservices.usgs.gov/",
+  "api_docs": "https://api.waterdata.usgs.gov/docs/",
   "demo": {
     "flagship": {
       "name": "River Flow Demo",
       "config": {
         "enabled": true,
-        "site_number": "11169000",
+        "site_number": "11169025",
         "refresh_seconds": 900
       },
       "template": [

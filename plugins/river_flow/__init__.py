@@ -10,7 +10,9 @@ from src.plugins.base import PluginBase, PluginResult
 
 logger = logging.getLogger(__name__)
 
-API_URL = "https://waterservices.usgs.gov/nwis/iv/"
+# USGS Water Data OGC API (legacy waterservices.usgs.gov is decommissioned Q1 2027)
+LATEST_URL = "https://api.waterdata.usgs.gov/ogcapi/v0/collections/latest-continuous/items"
+SITE_URL = "https://api.waterdata.usgs.gov/ogcapi/v0/collections/monitoring-locations/items/{location_id}"
 USER_AGENT = "FiestaBoard River Flow Plugin (https://github.com/Fiestaboard/fiestaboard-plugin--river-flow)"
 
 
@@ -21,38 +23,72 @@ class RiverFlowPlugin(PluginBase):
     def plugin_id(self) -> str:
         return "river_flow"
 
+    def _headers(self) -> Dict[str, str]:
+        headers = {"User-Agent": USER_AGENT}
+        api_key = self.config.get("api_key")
+        if api_key:
+            headers["X-Api-Key"] = api_key
+        return headers
+
+    def _site_name(self, site: str, location_id: str) -> str:
+        """Look up the station name, cached per site (names are static)."""
+        cache = getattr(self, "_site_names", None)
+        if cache is None:
+            cache = self._site_names = {}
+        if site in cache:
+            return cache[site]
+        try:
+            response = requests.get(
+                SITE_URL.format(location_id=location_id),
+                params={"f": "json"},
+                headers=self._headers(),
+                timeout=10,
+            )
+            response.raise_for_status()
+            name = str(response.json()["properties"]["monitoring_location_name"])
+            cache[site] = name
+            return name
+        except Exception:
+            # Name is cosmetic; fall back to the site number and retry next refresh
+            logger.warning("Could not fetch site name for %s", site, exc_info=True)
+            return site
+
     def fetch_data(self) -> PluginResult:
         try:
-            site = self.config.get("site_number") or "11169000"
+            # 11169025 = Guadalupe R abv Hwy 101 at San Jose (11169000 stopped reporting in 2003)
+            site = self.config.get("site_number") or "11169025"
+            location_id = f"USGS-{site}"
 
             response = requests.get(
-                API_URL,
+                LATEST_URL,
                 params={
-                    "format": "json",
-                    "sites": site,
-                    "parameterCd": "00060",  # discharge in cfs
-                    "siteStatus": "active",
+                    "monitoring_location_id": location_id,
+                    "parameter_code": "00060",  # discharge in cfs
+                    "f": "json",
                 },
-                headers={"User-Agent": USER_AGENT},
+                headers=self._headers(),
                 timeout=10,
             )
             response.raise_for_status()
             data = response.json()
 
-            time_series = data.get("value", {}).get("timeSeries", [])
-            if not time_series:
+            features = data.get("features", [])
+            if not features:
                 return PluginResult(available=False, error="No data for site")
 
-            ts = time_series[0]
-            site_name = str(ts.get("sourceInfo", {}).get("siteName", site))
-
-            values = ts.get("values", [{}])[0].get("value", [])
-            if not values:
+            # One feature per observation; take the most recent reading
+            latest = max(
+                features, key=lambda f: f.get("properties", {}).get("time") or ""
+            )
+            props = latest.get("properties", {})
+            if props.get("value") is None:
                 return PluginResult(available=False, error="No discharge values")
 
-            latest = values[-1]
-            flow_cfs = round(float(latest.get("value", 0)), 1)
-            dt_str = latest.get("dateTime", "")[:16].replace("T", " ")
+            flow_cfs = round(float(props["value"]), 1)
+            # `time` is ISO 8601 UTC (the legacy API returned station-local time)
+            dt_str = str(props.get("time", ""))[:16].replace("T", " ")
+
+            site_name = self._site_name(site, location_id)
 
             # Simple status heuristic
             if flow_cfs > 5000:

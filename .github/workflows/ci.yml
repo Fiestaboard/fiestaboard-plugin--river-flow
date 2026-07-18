@@ -5,6 +5,10 @@ on:
     branches: [main]
   pull_request:
     branches: [main]
+  schedule:
+    # Weekly canary against the real USGS API to catch upstream changes early
+    - cron: "0 14 * * 1"
+  workflow_dispatch:
 
 jobs:
   test:
@@ -52,3 +56,31 @@ jobs:
             --cov-report=term-missing \
             --cov-fail-under=70 \
             --ignore=fiestaboard-core
+
+  live-api-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/checkout@v4
+        with:
+          repository: Fiestaboard/FiestaBoard
+          path: fiestaboard-core
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          pip install -r fiestaboard-core/requirements.txt
+          pip install pytest
+
+      - name: Run live API tests
+        env:
+          PYTHONPATH: "${{ github.workspace }}:fiestaboard-core"
+          BOARD_READ_WRITE_KEY: test_key
+          RUN_LIVE_API_TESTS: "1"
+        run: |
+          pytest tests/test_live_api.py -v --ignore=fiestaboard-core
