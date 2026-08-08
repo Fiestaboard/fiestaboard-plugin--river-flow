@@ -86,6 +86,28 @@
       "primary": true
     }
   ],
+  "teaser": "245 CFS NORMAL",
+  "previews": [
+    {
+      "device_type": "flagship",
+      "rows": [
+        "      River Flow",
+        "GUADALUPE R A SAN JOSE",
+        "",
+        "Flow: 245.0 cfs",
+        "Above normal",
+        "2026-05-01 12:00"
+      ]
+    },
+    {
+      "device_type": "note",
+      "rows": [
+        "GUADALUPE R A",
+        "245.0 CFS",
+        "Above normal"
+      ]
+    }
+  ],
   "api_docs": "https://api.waterdata.usgs.gov/docs/",
   "demo": {
     "flagship": {
